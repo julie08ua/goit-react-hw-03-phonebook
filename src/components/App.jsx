@@ -3,11 +3,26 @@ import { ContactForm } from './ContactForm/ContactForm';
 import { ContactsList } from './ContactsList/ContactsList';
 import { Filter } from './Filter/Filter';
 
+const STORAGE_KEY = 'contacts';
 
 export class App extends Component {
     state = {
         contacts: [],
         filter: '',
+    };
+
+    componentDidMount() {
+        const savedContactsState = localStorage.getItem(STORAGE_KEY);
+
+        if (savedContactsState !== null) {
+            this.setState({ contacts: JSON.parse(savedContactsState) });
+        }
+    };
+
+    componentDidUpdate(_, prevState) {
+        if (this.state.contacts !== prevState.contacts) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(this.state.contacts));
+        }
     };
 
     formSubmit = data => {
@@ -30,19 +45,6 @@ export class App extends Component {
 
     changeFilter = ({target}) => {
         this.setState({ filter: target.value });
-    };
-
-    componentDidMount() {
-        const savedContactsState = localStorage.getItem('contacts');
-        if (savedContactsState !== null) {
-            this.setState({ contacts: JSON.parse(savedContactsState) });
-        }
-    };
-
-    componentDidUpdate(_, prevState) {
-        if (this.state.contacts !== prevState.contacts) {
-            localStorage.setItem('contacts', JSON.stringify(this.state.contacts));
-        }
     };
 
     render() {
